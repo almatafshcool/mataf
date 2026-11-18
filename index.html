@@ -167,9 +167,15 @@ var APP = "https://script.google.com/macros/s/AKfycbxlWrqe_Zt0JKatC4TZeDaP2bQ9EQ
   var p = qs('p').replace(/[^A-Za-z0-9]/g, '').slice(0, 30);
   if (p) { leave(APP + '?p=' + encodeURIComponent(p), 'جارٍ فتح صفحة متابعة الطالب…'); return; }
 
-  // 2) رابط معلم جاهز: ?u=اسم المستخدم
+  // 2) رابط جاهز باسم المستخدم: ?u=اسم المستخدم — والوجهة تتبع view إن وُجدت
   var u = qs('u').replace(/[^A-Za-z0-9]/g, '').slice(0, 12);
-  if (u) { leave(APP + '?view=tlogin&u=' + encodeURIComponent(u), 'جارٍ فتح صفحة دخول المعلمين…'); return; }
+  var v = qs('view').replace(/[^a-z]/g, '').slice(0, 10);
+  var VIEWS = { tlogin: 'جارٍ فتح صفحة دخول المعلمين…', slogin: 'جارٍ فتح صفحة الدخول الإداري…', alogin: 'جارٍ فتح صفحة دخول الإدارة…' };
+  if (u || v) {
+    var dest = VIEWS[v] ? v : 'tlogin';
+    leave(APP + '?view=' + dest + (u ? '&u=' + encodeURIComponent(u) : ''), VIEWS[dest]);
+    return;
+  }
 
   // 3) الصفحة الرئيسية
   $('cAdmin').href = APP + '?view=alogin';
